@@ -1,0 +1,4 @@
+﻿@model PreecoLuckyDraw.Models.CAMPAIGN_DETAIL
+
+@Html.DropDownListFor(model => model.IDDETAIL,
+new SelectList(Model.listCampDetail.OrderBy(model => model.PRIZE.NAME), "IDDETAIL", "PRIZE.NAME"), new { @onchange = "chosse()",@class="btn-run" })

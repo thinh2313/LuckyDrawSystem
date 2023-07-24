@@ -1,0 +1,245 @@
+//-------- Read Excel --------------------------------------------------------------------------------
+//document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+//var ExcelToJSON = function() {
+
+//    this.parseExcel = function(file) {
+//      var reader = new FileReader();
+
+//      reader.onload = function(e) {
+//        var data = e.target.result;
+//        var workbook = XLSX.read(data, {
+//          type: 'binary'
+//        });
+//        workbook.SheetNames.forEach(function(sheetName) {
+//          var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+//          var json_object = JSON.stringify(XL_row_object);
+//          console.log(JSON.parse(json_object));
+//          jQuery('#xlx_json').val(json_object);
+//        })
+//      };
+
+//      reader.onerror = function(ex) {
+//        console.log(ex);
+//      };
+
+//      reader.readAsBinaryString(file);
+//    };
+//  };
+
+//  function handleFileSelect(evt) {
+
+//    var files = evt.target.files;
+//    var xl2json = new ExcelToJSON();
+//    xl2json.parseExcel(files[0]);
+//  }
+//--------------------------- ExportExcel ----------------------------
+window.onbeforeunload = function () {
+    return "Sau khi đọc được thông báo này, mọi trách nhiệm đã thuộc về bạn !!!"
+}
+var titlename = document.getElementById("nameCamp").value;
+const date = new Date()
+let day = date.getDate()
+let month = date.getMonth() + 1
+let year = date.getFullYear()
+let fullDate = day + "-" + month + "-" + year;
+function ExportExcel() {
+    $("#table2excel").table2excel({
+        name: "TênFile",
+        filename: titlename + "_" + fullDate + "Winners.xlsx",
+        fileext: ".xls",
+    });
+};
+let arrData = localStorage.getItem("DataLuckyDraw");
+console.log("DataLuckyDraw", JSON.parse(arrData));
+//------------------------------- Run  Draw ----------------------------
+const form = document.querySelector('.contact-form');
+form.addEventListener('submit', handleFormSubmit);
+const arrHistoryName = [];
+var startInteval;
+const btnsubmit = document.getElementById("submit");
+
+const btnstartDraw = document.getElementById("startDraw");
+function myTimer() {
+    for (var i = 0; i < 10; i++) {
+        const rd = Math.round(Math.random() * 9);
+        document.getElementById(i).innerHTML = rd;
+    }
+
+}
+function startDrawN() {
+    document.getElementById("drawAudio").play();
+    btnsubmit.style.display = "block";
+    btnstartDraw.style.display = "none";
+    document.getElementById("status").style.color = "white";
+    startInteval = setInterval(myTimer, 30);
+
+}
+function handleFormSubmit(event) {
+    //---------------------------------------
+    var table = document.getElementById("joiner");
+    var header = [];
+    var rows = [];
+
+    for (var i = 0; i < table.rows[0].cells.length; i++) {
+        var headerrow = table.rows[0].cells[i].innerHTML;
+
+        var singledata = headerrow;
+        headerrow = singledata.trim();
+        var splitdata = headerrow;
+        headerrow = splitdata.replace(/\n/g, "");
+        //var splitnhay = headerrow;
+        //headerrow = splitnhay.replace(/"/g, "");
+        header.push(headerrow);
+    }
+
+    for (var i = 1; i < table.rows.length; i++) {
+        var row = {};
+        for (var j = 0; j < table.rows[i].cells.length; j++) {
+            var singledata = row[header[j]] = table.rows[i].cells[j].innerHTML;
+            row[header[j]] = singledata.trim();
+            var splitdata = row[header[j]];
+            row[header[j]] = splitdata.replace(/\n/g, "");
+
+        }
+        rows.push(row);
+    }
+    console.log(row)
+//---------------------------------------
+    //
+    document.getElementById("drawAudio").play();
+    document.getElementById("congraAudio").pause();
+//
+    document.getElementById("phaohoa").style.display = "none";
+    document.getElementById("submit").disabled=true;
+
+    event.preventDefault();
+    var obj = [];
+    if (arrData == [] || arrData == null || arrData == "[]") {
+        obj = rows;
+        localStorage.removeItem("DataLuckyDraw");
+        localStorage.clear();
+
+    }
+    else {
+
+        obj = JSON.parse(arrData);
+
+    }
+    console.log("dataGoDraw", obj);
+
+    //document.getElementById("submit").style.alignContent = "center";
+    //document.getElementById("submit").textContent = "Quay";
+    //document.getElementById("status").style.color = "white";
+
+
+
+
+    //const myInterval = setInterval(function () {
+    //    let rd = Math.floor(Math.random() * obj.length);
+    //    document.getElementById("0").innerText = obj[rd].NAME;
+
+    //}, 30);
+    //function myStop() {
+    //    clearInterval(myInterval);
+    //}
+
+
+    let rd = Math.floor(Math.random() * obj.length);
+    var arr = obj[rd].NAME;
+     setTimeout(result,4500);
+    function result(){
+        document.getElementById("0").innerText = arr;
+
+    }
+    const phoneUser = obj[rd].IDJOINER;
+    const person = obj[rd].NAME;
+    const nameCus = document.getElementById("nameCus").value;
+    const nameCamp = document.getElementById("nameCamp").value;
+    const datetime = new Date().toLocaleString().replace(",", " ");
+    person.toString();
+    //---------------------------
+    var IDitemprize = $("#IDDETAIL option:selected").val();
+    var e = document.getElementById("IDDETAIL");
+    var itemprize = e.options[e.selectedIndex].text;
+    var today = new Date();
+    var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+    $("#result").append(
+        "<tr>"
+        + "<td> " + itemprize + "</td>"
+        + "<td>" + person + "</td>"
+        + "<td>" + phoneUser + "</td>"
+        + "<td>" + date + "</td>"
+        + "<td style=\"display:none\"> " + IDitemprize + "</td>"
+
+        + "</tr>"
+    );
+    function myGreeting() {
+        document.getElementById("phaohoa").style.display = "block";
+        document.getElementById("congraAudio").play();
+
+        document.getElementById("modal-congrate").style.display = "block";
+        const alertWinner = "<p>" + "Chúc mừng \"" + " <span class=\"colorCongrate\">" + person + "</span>\"" + "</p>"
+            + "<p>" + " có số điện thoại \"" + " <span class=\"colorCongrate\">" + phoneUser + "</span>\"" + "</p>"
+            + "<p>" + " đã đoạt " + " <span class=\"colorCongrate\">" + itemprize + "</span>" + " của chương trình" + "</p>";
+
+        document.getElementById("congrate").innerHTML = alertWinner;
+        document.getElementById("status").style.color = "transparent";
+        document.getElementById("submit").disabled = false;
+        setTimeout(stopPhaohoa, 7000)
+
+
+    }
+    obj.splice(rd, 1);
+    localStorage.setItem("DataLuckyDraw", JSON.stringify(obj));
+    const itemHistory = "<p>" + datetime + ": \"" + nameCus + "\" - " + nameCamp + " - " + person + " - " + phoneUser + " - " + itemprize + "</p>";
+    arrHistoryName.push(itemHistory);
+    localStorage.setItem("HistoryDrawName", arrHistoryName)
+    arrData = JSON.stringify(obj);
+    console.log("obj after splice", obj);
+   setTimeout(myGreeting, 5000);
+    setTimeout(myStop, 4500);
+    function stopPhaohoa() {
+        document.getElementById("phaohoa").style.display = "none";
+    }
+}
+
+
+//------------------------------------------------------------
+// Modal
+var modal = document.getElementById("myModal");
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+// When the user clicks the button, open the modal 
+btn.onclick = function () {
+    modal.style.display = "block";
+}
+// When the user clicks on <span> (rd), close the modal
+span.onclick = function () {
+    modal.style.display = "none";
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    } if (document.getElementById("modal-congrate")) {
+        document.getElementById("modal-congrate").style.display = "none";
+
+    }
+}
+function hideShow() {
+    document.getElementById("fs").style.display = "block";
+    document.getElementById("btn-hideshow").style.display = "none";
+    document.getElementById("img-gift").style.display = "block";
+
+}
+//--------HideShow Title---------------
+function showhideTitle() {
+    const title = document.getElementById("titlecampaign").style;
+    if (title.color == "transparent") {
+        title.color = "#b2b2b2";
+    } else {
+        title.color = "transparent";
+    }
+}
